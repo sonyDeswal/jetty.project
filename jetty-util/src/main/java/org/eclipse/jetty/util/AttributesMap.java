@@ -103,7 +103,7 @@ public class AttributesMap implements Attributes, Dumpable
     public Set<Map.Entry<String, Object>> getAttributeEntrySet()
     {
         Map<String, Object> map = map();
-        return map == null ? Collections.<Map.Entry<String, Object>>emptySet() : map.entrySet();
+        return map == null ? Collections.emptySet() : map.entrySet();
     }
 
     public static Enumeration<String> getAttributeNamesCopy(Attributes attrs)
@@ -111,8 +111,7 @@ public class AttributesMap implements Attributes, Dumpable
         if (attrs instanceof AttributesMap)
             return Collections.enumeration(((AttributesMap)attrs).keySet());
 
-        List<String> names = new ArrayList<>();
-        names.addAll(Collections.list(attrs.getAttributeNames()));
+        List<String> names = new ArrayList<>(Collections.list(attrs.getAttributeNames()));
         return Collections.enumeration(names);
     }
 
@@ -140,7 +139,7 @@ public class AttributesMap implements Attributes, Dumpable
     private Set<String> keySet()
     {
         Map<String, Object> map = map();
-        return map == null ? Collections.<String>emptySet() : map.keySet();
+        return map == null ? Collections.emptySet() : map.keySet();
     }
 
     public void addAll(Attributes attributes)
