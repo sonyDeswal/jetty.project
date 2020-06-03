@@ -208,7 +208,7 @@ public class PathMappings<E> implements Iterable<MappedResource<E>>, Dumpable
     public E get(PathSpec spec)
     {
         return  _mappings.stream()
-            .filter(mappedResource -> mappedResource.getPathSpec().compareTo(spec) == 0)
+            .filter(mappedResource -> mappedResource.getPathSpec().equals(spec))
             .map(MappedResource::getResource)
             .findFirst()
             .orElse(null);
