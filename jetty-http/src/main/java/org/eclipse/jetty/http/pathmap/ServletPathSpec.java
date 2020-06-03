@@ -291,4 +291,10 @@ public class ServletPathSpec implements PathSpec
                 return false;
         }
     }
+
+    @Override
+    public String toString()
+    {
+        return String.format("%s@%s{%s}", getClass().getSimpleName(), Integer.toHexString(hashCode()), _declaration);
+    }
 }
