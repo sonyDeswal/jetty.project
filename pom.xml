@@ -1470,6 +1470,14 @@
           </snapshots>
         </repository>
         <repository>
+          <id>apache-snapshots</id>
+          <name>jetty-snapshots</name>
+          <url>https://repository.apache.org/content/repositories/snapshots</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+        <repository>
           <id>oss.snapshots</id>
           <name>OSS Snapshots</name>
           <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -1481,6 +1489,16 @@
           </snapshots>
         </repository>
       </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>apache-snapshots</id>
+          <name>jetty-snapshots</name>
+          <url>https://repository.apache.org/content/repositories/snapshots</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
     </profile>
   </profiles>
 
