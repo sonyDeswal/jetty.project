@@ -300,7 +300,7 @@ public class ConnectionPoolTest
         assertEquals(2, connectionPool.getConnectionCount());
     }
 
-    @ParameterizedTest(name = "testConcurrentRequestsDontOpenTooManyConnections {0)")
+    @ParameterizedTest
     @MethodSource("pools")
     public void testConcurrentRequestsDontOpenTooManyConnections(ConnectionPoolFactory factory) throws Exception
     {
