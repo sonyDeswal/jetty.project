@@ -943,20 +943,70 @@ public class WebInfConfiguration extends AbstractConfiguration
         if (context == null || context.getExtraClasspath() == null)
             return null;
 
+
         List<Resource> jarResources = new ArrayList<>();
         StringTokenizer tokenizer = new StringTokenizer(context.getExtraClasspath(), ",;");
         while (tokenizer.hasMoreTokens())
         {
-            Resource resource = context.newResource(tokenizer.nextToken().trim());
-            String fnlc = resource.getName().toLowerCase(Locale.ENGLISH);
-            int dot = fnlc.lastIndexOf('.');
-            String extension = (dot < 0 ? null : fnlc.substring(dot));
-            if (extension != null && (extension.equals(".jar") || extension.equals(".zip")))
+            String token = tokenizer.nextToken().trim();
+
+            if (token.endsWith("*"))
             {
-                jarResources.add(resource);
+                if (token.length() > 1)
+                {
+                    token = token.substring(0, token.length() - 1);
+                    Resource resource = context.newResource(token);
+                    if (LOG.isDebugEnabled())
+                        LOG.debug("Glob Path resource=" + resource);
+                    jarResources.addAll(getJars(resource));
+                }
+
+            }else {
+                Resource resource = context.newResource(tokenizer.nextToken().trim());
+                if (isFileSupported(resource)) {
+                    jarResources.add(resource);
+                }
             }
         }
 
+        return jarResources;
+    }
+
+    private boolean isFileSupported(Resource resource)
+    {
+        String fnlc = resource.getName().toLowerCase(Locale.ENGLISH);
+        int dot = fnlc.lastIndexOf('.');
+        String extension = (dot < 0 ? null : fnlc.substring(dot));
+        if (extension != null && (extension.equals(".jar") || extension.equals(".zip"))){
+            return true;
+        }
+        return false;
+    }
+
+    public List<Resource> getJars(Resource lib)
+    {
+        List<Resource> jarResources = new ArrayList<>();
+        if (lib.exists() && lib.isDirectory()) {
+            String[] files = lib.list();
+            if (files != null) {
+                Arrays.sort(files);
+            }
+            for (int f = 0; files != null && f < files.length; f++) {
+                try {
+                    Resource fn = lib.addPath(files[f]);
+                    if (LOG.isDebugEnabled())
+                        LOG.debug("addJar - {}", fn);
+
+                    // don't check if this is a directory (prevents use of symlinks), see Bug 353165
+                    if (isFileSupported(fn)) {
+                        String jar = URIUtil.encodeSpecific(fn.toString(), ",;");
+                        jarResources.add(fn);
+                    }
+                } catch (Exception ex) {
+                    LOG.warn(Log.EXCEPTION, ex);
+                }
+            }
+        }
         return jarResources;
     }
 
@@ -1001,11 +1051,25 @@ public class WebInfConfiguration extends AbstractConfiguration
 
         List<Resource> dirResources = new ArrayList<>();
         StringTokenizer tokenizer = new StringTokenizer(context.getExtraClasspath(), ",;");
-        while (tokenizer.hasMoreTokens())
-        {
-            Resource resource = context.newResource(tokenizer.nextToken().trim());
-            if (resource.exists() && resource.isDirectory())
-                dirResources.add(resource);
+        while (tokenizer.hasMoreTokens()) {
+            String token = tokenizer.nextToken().trim();
+
+            if (token.endsWith("*")) {
+                if (token.length() > 1) {
+                    token = token.substring(0, token.length() - 1);
+                    Resource resource = context.newResource(token);
+                    if (LOG.isDebugEnabled())
+                        LOG.debug("Glob Path resource=" + resource);
+                    if (resource.exists() && resource.isDirectory())
+                        dirResources.add(resource);
+                }
+
+            } else {
+
+                Resource resource = context.newResource(tokenizer.nextToken().trim());
+                if (resource.exists() && resource.isDirectory())
+                    dirResources.add(resource);
+            }
         }
 
         return dirResources;
