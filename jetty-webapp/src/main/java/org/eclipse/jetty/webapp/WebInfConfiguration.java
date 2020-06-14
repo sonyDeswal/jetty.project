@@ -961,8 +961,8 @@ public class WebInfConfiguration extends AbstractConfiguration
                     jarResources.addAll(getJars(resource));
                 }
 
-            }else {
-                Resource resource = context.newResource(tokenizer.nextToken().trim());
+            }else if(token != null) {
+                Resource resource = context.newResource(token);
                 if (isFileSupported(resource)) {
                     jarResources.add(resource);
                 }
@@ -1064,9 +1064,9 @@ public class WebInfConfiguration extends AbstractConfiguration
                         dirResources.add(resource);
                 }
 
-            } else {
+            } else if(token != null) {
 
-                Resource resource = context.newResource(tokenizer.nextToken().trim());
+                Resource resource = context.newResource(token);
                 if (resource.exists() && resource.isDirectory())
                     dirResources.add(resource);
             }
